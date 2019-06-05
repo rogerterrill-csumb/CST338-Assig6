@@ -1,6 +1,6 @@
 /**
- * Title:               GUI Cards Phase 3
- * Files:               Assig5_Phase3.java
+ * Title:               Timed High Card Game Phase 1
+ * Files:               Assig6_Phase1.java
  * Semester:            Summer A, 2019
  * Date:                June 3, 2019
  *
@@ -23,7 +23,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.util.Random;
 
-public class Assig5_Phase3
+public class Assig6_Phase1
 {
    static int NUM_CARDS_PER_HAND = 7;
    static int NUM_PLAYERS = 2;
@@ -526,7 +526,7 @@ class CardTable extends JFrame implements ActionListener
       if (buttonString.equals("Deal"))
       {
          this.setVisible(false);
-         Assig5_Phase3.main(null);
+         Assig6_Phase1.main(null);
       }
       else if (buttonString.equals("Exit"))
          System.exit(0);
