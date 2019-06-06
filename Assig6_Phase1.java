@@ -33,7 +33,6 @@ public class Assig6_Phase1
 
       GameController gameController = new GameController(gameView, gameModel);
 
-      gameView.setVisible(true);
    }
 }
 
@@ -79,8 +78,8 @@ class CardGameFramework
          numPlayers = 4;
       // one of many ways to assure at least one full deal to all players
       if  (numCardsPerHand < 1 ||
-            numCardsPerHand >  numPacks * (52 - numUnusedCardsPerPack)
-                  / numPlayers )
+              numCardsPerHand >  numPacks * (52 - numUnusedCardsPerPack)
+                      / numPlayers )
          numCardsPerHand = numPacks * (52 - numUnusedCardsPerPack) / numPlayers;
 
       // allocate
@@ -190,7 +189,7 @@ class CardGameFramework
    {
       // returns bad card if either argument is bad
       if (playerIndex < 0 ||  playerIndex > numPlayers - 1 ||
-            cardIndex < 0 || cardIndex > numCardsPerHand - 1)
+              cardIndex < 0 || cardIndex > numCardsPerHand - 1)
       {
          //Creates a card that does not work
          return new Card('M', Card.Suit.SPADES);
@@ -310,15 +309,15 @@ class CardTable extends JFrame implements ActionListener
          System.exit(0);
       else if (buttonString.contentEquals("About"))
          JOptionPane.showMessageDialog(this,
-               "GUI Cards\n\n"
-                     + "A project by:\n "
-                     + " Abby Packham\n"
-                     + "  Carlos Orduna\n"
-                     + "  Dalia Faria\n"
-                     + "  George Blombach\n"
-                     + "  Roger Terrill\n\n"
-                     + " "
-                     + "CSUMB CST338, June 2019");
+                 "GUI Cards\n\n"
+                         + "A project by:\n "
+                         + " Abby Packham\n"
+                         + "  Carlos Orduna\n"
+                         + "  Dalia Faria\n"
+                         + "  George Blombach\n"
+                         + "  Roger Terrill\n\n"
+                         + " "
+                         + "CSUMB CST338, June 2019");
    }
 }
 
@@ -364,7 +363,7 @@ class GUICard
    static String numCard(int cardNum)
    {
       String[] cardValues =
-            {"A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "X"};
+              {"A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "X"};
       return cardValues[cardNum];
    }
 
@@ -375,7 +374,7 @@ class GUICard
          return "invalid";
 
       return Card.Suit.values()[suitNum]
-            .toString().toUpperCase().substring(0, 1);
+              .toString().toUpperCase().substring(0, 1);
 
    }
 
@@ -948,26 +947,26 @@ class Deck
             if (masterPackIndex / NUM_OF_VALUES == 0)
             {
                masterPack[masterPackIndex] =
-                     new Card(cardValues.charAt(masterPackIndex %
-                           NUM_OF_VALUES), Card.Suit.SPADES);
+                       new Card(cardValues.charAt(masterPackIndex %
+                               NUM_OF_VALUES), Card.Suit.SPADES);
             }
             if (masterPackIndex / NUM_OF_VALUES == 1)
             {
                masterPack[masterPackIndex] =
-                     new Card(cardValues.charAt(masterPackIndex %
-                           NUM_OF_VALUES), Card.Suit.CLUBS);
+                       new Card(cardValues.charAt(masterPackIndex %
+                               NUM_OF_VALUES), Card.Suit.CLUBS);
             }
             if (masterPackIndex / NUM_OF_VALUES == 2)
             {
                masterPack[masterPackIndex] =
-                     new Card(cardValues.charAt(masterPackIndex %
-                           NUM_OF_VALUES), Card.Suit.HEARTS);
+                       new Card(cardValues.charAt(masterPackIndex %
+                               NUM_OF_VALUES), Card.Suit.HEARTS);
             }
             if (masterPackIndex / NUM_OF_VALUES == 3)
             {
                masterPack[masterPackIndex] =
-                     new Card(cardValues.charAt(masterPackIndex %
-                           NUM_OF_VALUES), Card.Suit.DIAMONDS);
+                       new Card(cardValues.charAt(masterPackIndex %
+                               NUM_OF_VALUES), Card.Suit.DIAMONDS);
             }
          }
       }
@@ -1091,6 +1090,8 @@ class Deck
  *                        End of Deck                                        *
  *****************************************************************************/
 
+
+////////////////////////////////////////////////////////////////////////////////////
 class GameController
 {
    static int NUM_CARDS_PER_HAND = 7;
@@ -1103,8 +1104,17 @@ class GameController
    {
       this.gameView = gameView;
       this.gameModel = gameModel;
+      gameView.setHighCardGame(gameModel.getGame());
+      gameView.updateTable();
 
-      gameView.setHighCardGame(gameModel.getCardGameFramework());
+   }
+
+   public void startGame()
+   {
+      int numPacksPerDeck = 1;
+      int numJokersPerPack = 2;
+      int numUnusedCardsPerPack = 0;
+      Card[] unusedCardsPerPack = null;
    }
 
    public static Card generateRandomCard()
@@ -1113,44 +1123,210 @@ class GameController
       Random randomGen = new Random();
       return deck.inspectCard(randomGen.nextInt(deck.getNumCards()));
    }
+
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////
 class GameModel
 {
-   private CardGameFramework highCardGame;
-   int numPacksPerDeck = 1;
-   int numJokersPerPack = 2;
-   int numUnusedCardsPerPack = 0;
-   Card[] unusedCardsPerPack = null;
+   static int NUM_CARDS_PER_HAND = GameController.NUM_CARDS_PER_HAND;
+   static int NUM_PLAYERS = GameController.NUM_PLAYERS;
+   private Hand[] hands = new Hand[2];
+   private int humanScore = 0;
+   private int compScore = 0;
+   private Hand compHand;
+   private Hand humanHand;
+
+
+   public static CardGameFramework highCardGame;
 
    GameModel()
    {
+      int numPacksPerDeck = 1;
+      int numJokersPerPack = 2;
+      int numUnusedCardsPerPack = 0;
+      Card[] unusedCardsPerPack = null;
+
       // Creating highCardGame object
       highCardGame = new CardGameFramework(numPacksPerDeck, numJokersPerPack, numUnusedCardsPerPack, unusedCardsPerPack, GameController.NUM_PLAYERS, GameController.NUM_CARDS_PER_HAND);
 
       // Deals cards between the number of players
       highCardGame.deal();
+
+      System.out.println(highCardGame.getHand(1).toString());
+
    }
 
-   public CardGameFramework getCardGameFramework()
+   public CardGameFramework getGame()
    {
-      return this.highCardGame;
+      return highCardGame;
    }
+
+
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////
 class GameView extends JFrame
 {
-   static JLabel[] computerLabels = new JLabel[GameController.NUM_CARDS_PER_HAND];
-   static JLabel[] humanLabels = new JLabel[GameController.NUM_CARDS_PER_HAND];
-   static JLabel[] playedCardLabels = new JLabel[GameController.NUM_PLAYERS];
-   static JLabel[] playLabelText = new JLabel[GameController.NUM_PLAYERS];
+   static int NUM_CARDS_PER_HAND = GameController.NUM_CARDS_PER_HAND;
+   static int NUM_PLAYERS = GameController.NUM_PLAYERS;
+   static CardTable myCardTable = new CardTable("CardTable", GameController.NUM_CARDS_PER_HAND, GameController.NUM_PLAYERS);
+
+   static JLabel[] computerLabels = new JLabel[NUM_CARDS_PER_HAND];
+   static JLabel[] humanLabels = new JLabel[NUM_CARDS_PER_HAND];
+   static JLabel[] playedCardLabels = new JLabel[NUM_PLAYERS];
+   static JLabel[] playLabelText = new JLabel[NUM_PLAYERS];
    static JLabel gameText = new JLabel();
    static JLabel gameStatus = new JLabel();
+   static int computerCards[] =  new int[NUM_CARDS_PER_HAND];
 
-   private CardGameFramework highCardGame;
+   private int playerScore = 0;
+   private int computerScore = 0;
+
+   CardGameFramework highCardGame;
+
 
    GameView()
    {
+      // Resets the Table so not everythinng is showing on top of each other
+      myCardTable.pnlPlayArea.removeAll();
+      myCardTable.pnlComputerHand.removeAll();
+      myCardTable.pnlHumanHand.removeAll();
+      
+      // establish main frame in which program will run
+      myCardTable.setSize(800, 600);
+      myCardTable.setLocationRelativeTo(null);
+      myCardTable.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+   }
+
+   public void updateTable()
+   {
+
+      //add mouse adapter
+      MouseAdapter mouseAdapter = new MouseAdapter()
+      {
+         public void mouseClicked(MouseEvent e)
+         {
+            playGame(myCardTable.pnlHumanHand.getComponentZOrder
+                  (e.getComponent()));
+         }
+
+         private void playGame(int index)
+         {
+            //check conditions for game play
+            if (!playedCardLabels[1].isVisible())
+            {
+               //unhide placeholder card
+               playedCardLabels[1].setVisible(true);
+
+               //build card computer array in memory
+               for (int count = 0;count < NUM_CARDS_PER_HAND; count++)
+               {
+                  computerCards[count] = Card.valueOfCard(highCardGame
+                        .getHand(0).inspectCard(count));
+               }
+            }
+
+            //hide card just played
+            humanLabels[index].setVisible(false);
+
+            //move to playing field
+            playedCardLabels[1].setIcon(humanLabels[index].getIcon());
+
+            /* DEBUG System.out.print(Card.valueOfCard(highCardGame.getHand(1)
+             * .inspectCard(index)) + "\n");
+             */
+            /* DEBUG System.out.print(Card.valueOfCard(highCardGame.getHand(1)
+             * .inspectCard(index)) + "\n");
+             */
+
+            //get computer hand
+            computerPlay(Card.valueOfCard(highCardGame.getHand(1)
+                                                      .inspectCard(index)));
+         }
+
+         private void computerPlay(int highCard)
+         {
+            int bestCard = 14;
+            int index = 0;
+            int minInd = 0;
+            int minCard = 14;
+            //get available values
+            for (int count = 0;count < NUM_CARDS_PER_HAND; count++)
+            {
+               int cardValue = computerCards[count];
+               if (cardValue > highCard && cardValue < bestCard)
+               {
+                  index = count;
+                  bestCard = cardValue;
+               }
+
+               if (cardValue < minCard && cardValue >= 0)
+               {
+                  minInd = count;
+                  minCard = cardValue;
+               }
+            }
+            if (bestCard < 14)
+            {
+               //check conditions for game play
+               if (!playedCardLabels[0].isVisible())
+               {
+                  //unhide placeholder
+                  playedCardLabels[0].setVisible(true);
+               }
+               //hide card just played
+               computerLabels[index].setVisible(false);
+
+               //move to playing field
+               playedCardLabels[0].setIcon(GUICard.getIcon(highCardGame
+                     .getHand(0).inspectCard(index)));
+
+               computerCards[index] = -1;
+
+               //set display
+               computerScore ++;
+               updateGame("Computer Wins");
+            }
+            else
+            {
+               //check conditions for game play
+               if (!playedCardLabels[0].isVisible())
+               {
+                  //unhide placeholder
+                  playedCardLabels[0].setVisible(true);
+               }
+               //hide card just played
+               computerLabels[minInd].setVisible(false);
+
+               //move to playing field
+               playedCardLabels[0].setIcon(GUICard.getIcon(highCardGame
+                     .getHand(0).inspectCard(minInd)));
+
+               computerCards[minInd] = -1;
+
+               //set display
+               playerScore ++;
+               updateGame("You win");
+            }
+         }
+
+         private void updateGame(String message)
+         {
+            //show score
+            gameStatus.setText("Score: " + computerScore + "-" + playerScore);
+            gameText.setText(message);
+            if (computerScore + playerScore == NUM_CARDS_PER_HAND)
+               if (computerScore > playerScore)
+                  gameText.setText("Game Over Computer Wins");
+               else
+                  gameText.setText("Game Over You Win!");
+         }
+      }; //end of mouseAdapter
+
+
       playLabelText[0] = new JLabel( "Computer", JLabel.CENTER );
       playLabelText[1] = new JLabel( "You", JLabel.CENTER );
 
@@ -1160,29 +1336,22 @@ class GameView extends JFrame
       gameText.setForeground(Color.red);
       gameStatus.setForeground(Color.red);
 
-      //Load Icons for cards from GUICard class
       GUICard.loadCardIcons();
 
-      // establish main frame in which program will run
-      CardTable myCardTable = new CardTable("CardTable", GameController.NUM_CARDS_PER_HAND, GameController.NUM_PLAYERS);
-      myCardTable.setSize(800, 600);
-      myCardTable.setLocationRelativeTo(null);
-      myCardTable.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
       // CREATE LABELS ----------------------------------------------------
-      for (int card = 0; card < GameController.NUM_CARDS_PER_HAND; card++)
+      for (int card = 0; card < NUM_CARDS_PER_HAND; card++)
       {
          //give the Computer a back card Label
          computerLabels[card] = new JLabel(GUICard.getBackcardIcon());
 
          //give Human a card
-         Icon tempIcon = GUICard.getIcon(this.highCardGame.getHand(1).inspectCard(card));
+         Icon tempIcon = GUICard.getIcon(highCardGame.getHand(1).inspectCard(card));
          humanLabels[card] = new JLabel(tempIcon);
-//         humanLabels[card].addMouseListener(mouseAdapter);
+         humanLabels[card].addMouseListener(mouseAdapter);
       }
 
       // ADD LABELS TO PANELS -----------------------------------------
-      for (int card = 0; card < GameController.NUM_CARDS_PER_HAND; card++)
+      for (int card = 0; card < NUM_CARDS_PER_HAND; card++)
       {
          //add indexed label to Computer panel
          myCardTable.pnlComputerHand.add(computerLabels[card]);
@@ -1193,13 +1362,13 @@ class GameView extends JFrame
 
       // add two random cards in the play region (simulating a computer/hum ply)
       //getting random card
-      Icon tempIcon = GUICard.getIcon(GameController.generateRandomCard());
+      Icon tempIcon = GUICard.getIcon(generateRandomCard());
 
       //assigning 2 labels to playedCards
       playedCardLabels[0] = new JLabel(tempIcon);
       playedCardLabels[0].setVisible(false);
 
-      tempIcon = GUICard.getIcon(GameController.generateRandomCard());
+      tempIcon = GUICard.getIcon(generateRandomCard());
 
       playedCardLabels[1] = new JLabel(tempIcon);
       playedCardLabels[1].setVisible(false);
@@ -1212,9 +1381,16 @@ class GameView extends JFrame
       myCardTable.pnlPlayArea.add(playLabelText[1]);
       myCardTable.pnlPlayArea.add(gameStatus);
 
-      // show everything to the user
-      myCardTable.pack();
       myCardTable.setVisible(true);
+
+
+   }
+
+   public void resetTable()
+   {
+      myCardTable.pnlPlayArea.removeAll();
+      myCardTable.pnlComputerHand.removeAll();
+      myCardTable.pnlHumanHand.removeAll();
    }
 
    public void setHighCardGame(CardGameFramework highCardGame)
@@ -1222,6 +1398,10 @@ class GameView extends JFrame
       this.highCardGame = highCardGame;
    }
 
-
+   static Card generateRandomCard()
+   {
+      Deck deck = new Deck();
+      Random randomGen = new Random();
+      return deck.inspectCard(randomGen.nextInt(deck.getNumCards()));
+   }
 }
-
