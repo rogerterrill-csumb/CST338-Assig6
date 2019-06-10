@@ -144,15 +144,17 @@ class GameController
    /**
     * Timer Class
     */
-   public class TimerThread implements ActionListener, Runnable
+   public class TimerThread implements ActionListener
    {
       public void actionPerformed(ActionEvent e)
       {
          // Checks to see the status of the game which is defaulted to false
          if(!gameModel.getTimeStatus())
          {
+            System.out.println("Start");
+
             // Create Timer Object
-            Thread timerThread = new Thread(this);
+            Timer timerThread = new Timer();
 
             // Start the timer
             timerThread.start();
@@ -174,19 +176,23 @@ class GameController
       }
 
       // Timer with thread to run timer
-      public void run()
+      private class Timer extends Thread
       {
-         while(gameModel.getTimeStatus())
+         public void run()
          {
-            // Increment the seconds
-            gameModel.incrementSecondsonTimer();
+            while(gameModel.getTimeStatus())
+            {
+               // Increment the seconds
+               gameModel.incrementSecondsonTimer();
 
-            // Wait one second in between
-            gameModel.doNothing(1000);
+               // Wait one second in between
+               gameModel.doNothing(1000);
 
-            // Update the display
-            gameView.setTimerDisplay(gameModel.getSeconds());
+               // Update the display
+               gameView.setTimerDisplay(gameModel.getSeconds());
+            }
          }
       }
+
    }
 }
