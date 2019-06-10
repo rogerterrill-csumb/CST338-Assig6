@@ -82,8 +82,14 @@ class GameController
             // Adds played cards to player winnings
             gameModel.addToPlayerWinnings();
 
-            // Sets game won status
-            gameView.setGameStatus("You won!");
+            // Set game status to won
+            gameModel.setPlayerStatus("You Won!");
+
+            // Iterate player score by 1
+            gameModel.incrementPlayerScore();
+
+            // Show game status
+            gameView.setGameStatus(gameModel.getGameStatusWithScores());
 
             // Increments card count to check to access next computer card
             gameModel.incrementComputerCardCounter();
@@ -100,8 +106,14 @@ class GameController
             // Add current cards to computer winnings
             gameModel.addToComputerWinnings();
 
-            // Set status to lost
-            gameView.setGameStatus("You lost");;
+            // Set player status to loss
+            gameModel.setPlayerStatus("You Lost :(");
+
+            // Increment computer score by 1
+            gameModel.incrementComputerScore();
+
+            // Show game status
+            gameView.setGameStatus(gameModel.getGameStatusWithScores());;
 
             // Increments card counter to access next computer card in hand
             gameModel.incrementComputerCardCounter();
@@ -124,7 +136,7 @@ class GameController
          // If there are no components left, the game is over
          if(gameView.getPnlHumanHand().getComponentCount() == 0)
          {
-            gameView.setGameStatus("GAME OVER");
+            gameView.setGameStatus(gameModel.displayFinalScore());
          }
       }
    }
@@ -132,36 +144,48 @@ class GameController
    /**
     * Timer Class
     */
-   public class TimerThread implements ActionListener
+   public class TimerThread implements ActionListener, Runnable
    {
-      Timer timerThread = new Timer();
-
       public void actionPerformed(ActionEvent e)
       {
-         // Checks to see if the thread is running
-         if (!timerThread.isAlive())
+         // Checks to see the status of the game which is defaulted to false
+         if(!gameModel.getTimeStatus())
          {
+            // Create Timer Object
+            Thread timerThread = new Thread(this);
+
             // Start the timer
             timerThread.start();
+
+            // Set timer boolean value to true.
+            gameModel.setTimeStatus(true);
+
+            // Changes the display of the button to stop
+            gameView.setStartButtonText("Stop");
+         }
+         else
+         {
+            // Sets the timer boolean to false
+            gameModel.setTimeStatus(false);
+
+            // Changes the display of the button to Start
+            gameView.setStartButtonText("Start");
          }
       }
 
       // Timer with thread to run timer
-      private class Timer extends Thread
+      public void run()
       {
-         public void run()
+         while(gameModel.getTimeStatus())
          {
-            while(true)
-            {
-               // Increment the seconds
-               gameModel.incrementSecondsonTimer();
+            // Increment the seconds
+            gameModel.incrementSecondsonTimer();
 
-               // Wait one second in between
-               gameModel.doNothing(1000);
+            // Wait one second in between
+            gameModel.doNothing(1000);
 
-               // Update the display
-               gameView.setTimerDisplay(gameModel.getSeconds());
-            }
+            // Update the display
+            gameView.setTimerDisplay(gameModel.getSeconds());
          }
       }
    }
