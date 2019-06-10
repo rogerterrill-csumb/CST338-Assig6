@@ -29,10 +29,9 @@ class GameView extends JFrame
    // Timer Display Components
    private JLabel timerDisplay = new JLabel("0");
    private JButton startButton = new JButton("Start");
-   private JButton stopButton = new JButton("Stop");
 
-   //3 panels - One Computer player, One Human player, One play area
-   private JPanel pnlComputerHand, pnlHumanHand, pnlPlayArea, pnlTimer, pnlTimerButton;
+   // 4 panels - One Computer player, One Human player, One play area, Timer Area
+   private JPanel pnlComputerHand, pnlHumanHand, pnlPlayArea, pnlTimerDisplay;
 
    // CardGameFramework object to pass into from model through controller
    private CardGameFramework highCardGame;
@@ -60,21 +59,18 @@ class GameView extends JFrame
       pnlComputerHand = new JPanel(new GridLayout(1,numCardsPerHand)); //Remember col num is ignored if it goes over adds new column
       pnlHumanHand = new JPanel(new GridLayout(1,numCardsPerHand)); //Remember col num is ignored
       pnlPlayArea = new JPanel(new GridLayout(2,3)); //Remember col num is ignored
-      pnlTimer = new JPanel(new GridLayout(1,1)); // Timer Display
-      pnlTimerButton = new JPanel(new GridLayout(2,1)); // Timer display Buttons
+      pnlTimerDisplay = new JPanel(new GridLayout(2,1)); // Timer display with Button
 
       // Place panels to their specific location
       add(pnlComputerHand, BorderLayout.NORTH);
-      add(pnlTimer, BorderLayout.EAST);
       add(pnlPlayArea, BorderLayout.CENTER);
-      add(pnlTimerButton, BorderLayout.WEST);
+      add(pnlTimerDisplay, BorderLayout.WEST);
       add(pnlHumanHand, BorderLayout.SOUTH);
 
       // Add border titles to each section
       pnlComputerHand.setBorder(new TitledBorder("Computer Hand"));
-      pnlTimer.setBorder(new TitledBorder("Timer"));
       pnlPlayArea.setBorder(new TitledBorder("Playing Area"));
-      pnlTimerButton.setBorder(new TitledBorder("Timer Button"));
+      pnlTimerDisplay.setBorder(new TitledBorder("Timer Button"));
       pnlHumanHand.setBorder(new TitledBorder("Your Hand"));
 
       // Set the game text style
@@ -134,9 +130,8 @@ class GameView extends JFrame
       pnlPlayArea.add(gameStatus);
 
       // Add timer components to display
-      pnlTimer.add(timerDisplay);
-      pnlTimerButton.add(startButton);
-      pnlTimerButton.add(stopButton);
+      pnlTimerDisplay.add(startButton);
+      pnlTimerDisplay.add(timerDisplay);
 
       // Show the table
       setVisible(true);
@@ -221,5 +216,10 @@ class GameView extends JFrame
    public JButton getStartButton()
    {
       return startButton;
+   }
+
+   public void setStartButtonText(String str)
+   {
+      this.startButton.setText(str);
    }
 }
