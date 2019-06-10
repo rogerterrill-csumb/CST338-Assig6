@@ -27,7 +27,7 @@ class GameView extends JFrame
    private JLabel playerCardLabel, computerCardLabel;
 
    // Timer Display Components
-   private JLabel timerDisplay = new JLabel("0");
+   private JLabel timerDisplay = new JLabel("0", SwingConstants.CENTER);
    private JButton startButton = new JButton("Start");
 
    // 4 panels - One Computer player, One Human player, One play area, Timer Area
